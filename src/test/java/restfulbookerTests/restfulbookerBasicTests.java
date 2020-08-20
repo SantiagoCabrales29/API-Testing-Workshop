@@ -1,5 +1,6 @@
 package restfulbookerTests;
 
+import helpers.TestEnv;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
@@ -58,7 +59,7 @@ public class restfulbookerBasicTests {
 		given().
 				contentType(ContentType.JSON).
 				when()
-				.get("https://restful-booker.herokuapp.com/booking/1").
+				.get(TestEnv.getURL()+"/booking/1").
 				then().
 				assertThat().
 				statusCode(200);
@@ -69,7 +70,7 @@ public class restfulbookerBasicTests {
 		given().
 				contentType(ContentType.JSON).
 				when()
-				.get("https://restful-booker.herokuapp.com/booking/1").
+				.get(TestEnv.getURL()+"/booking/1").
 				then().
 				assertThat().body("firstname", not(equalTo("Santi"))).
 							body("totalprice",greaterThan(0));
