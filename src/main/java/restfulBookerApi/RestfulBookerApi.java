@@ -80,4 +80,49 @@ public class RestfulBookerApi {
 
 	}
 
+	public RestfulBookerBooking getBookingById(String id) {
+		Response response = getBookingsEndpointResponse();
+		List<RestfulBookerBookingId> listBookingIds = getBookingsIdsList(response);
+		response = httpMessageSender.getMessageTo("/booking/"+id);
+
+		JsonElement element = parser.parse(response.body().asString());
+
+		RestfulBookerBooking booking = gson.fromJson(element, RestfulBookerBooking.class);
+		System.out.println("El booking que se selecciono tiene como firstname a: " + booking.getFirstname());
+
+		return booking;
+	}
+
+	public Response createBooking(){
+		HashMap datesMap = new HashMap();
+		datesMap.put("checkin", "1996-04-29");
+		datesMap.put("checkout", "2020-04-01");
+		RestfulBookerBooking booking = new RestfulBookerBooking("Juan", "Campo",777, true, datesMap,"None");
+		Response response = httpMessageSender.postMessageTo(booking, "/booking");
+		return response;
+	}
+
+	public String auth(){
+		String username = "{\"username\" : \"admin\", \"password\" : \"password123\"}";
+		Response response = httpMessageSender.auth(username,"/auth");
+		String token = response.then().extract().path("token");
+
+		System.out.println("El token es:" + token);
+
+		return token;
+	}
+
+	public Response updateBooking(RestfulBookerBooking booking, String token){
+		Response response = httpMessageSender.putMessageTo(booking, token, "/booking/1");
+
+		return response;
+	}
+
+	public Response deleteBooking(String token, String id){
+		Response response = httpMessageSender.deleteMessageTo(token,"/booking/"+id);
+
+		return response;
+	}
+
+
 }

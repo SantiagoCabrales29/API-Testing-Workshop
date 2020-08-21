@@ -2,6 +2,8 @@ package restfulBookerApi.html;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import restfulBookerApi.entities.RestfulBookerBooking;
+import restfulBookerApi.entities.RestfulBookerBookingId;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,89 +46,60 @@ public class HttpMessageSender {
 		}
 	}
 
-
-	//Esto es despues
-
-	public Response getMessageTo(String msg,  String endpoint){
+	public Response postMessageTo(RestfulBookerBooking booking, String endpoint){
 		URL theEndpointUrl = createEndpoint(url, endpoint);
 
 		Response ret =
 				given().
 						contentType(ContentType.JSON).
+						body(booking).
+						log().body().
 						when().
-						get(theEndpointUrl.toExternalForm()).
+						post(theEndpointUrl.toExternalForm()).
+						andReturn();
+
+		return ret;
+	}
+
+	public Response auth(String credentials, String endpoint){
+		URL theEndpointUrl = createEndpoint(url, endpoint);
+
+		Response ret =
+				given().
+						contentType(ContentType.JSON).
+						body(credentials).
+						log().all().
+						when().
+						post(theEndpointUrl.toExternalForm()).
+						andReturn();
+
+		return ret;
+	}
+
+	public Response putMessageTo(RestfulBookerBooking booking, String token, String endpoint){
+		URL theEndpointUrl = createEndpoint(url, endpoint);
+
+		Response ret =
+				given().
+						body(booking).
+						contentType(ContentType.JSON).
+						cookie("token",token).log().all().
+						when().
+						put(theEndpointUrl.toExternalForm()).
 						andReturn();
 		return ret;
 	}
 
-//
-//	public Response postMessageTo(RestfulBookerBooking booking, String endpoint){
-//		URL theEndpointUrl = createEndpoint(url, endpoint);
-//
-//		Response ret =
-//				given().
-//						contentType(ContentType.JSON).
-//						body(booking).
-//						log().body().
-//						when().
-//						post(theEndpointUrl.toExternalForm()).
-//						andReturn();
-//
-//		return ret;
-//	}
-//
-//	public Response auth(String credentials, String endpoint){
-//		URL theEndpointUrl = createEndpoint(url, endpoint);
-//
-//		Response ret =
-//				given().
-//						contentType(ContentType.JSON).
-//						body(credentials).
-//						log().all().
-//						when().
-//						post(theEndpointUrl.toExternalForm()).
-//						andReturn();
-//
-//		return ret;
-//	}
-//
-//	public Response putMessageTo(RestfulBookerBooking booking, String token, String endpoint){
-//		URL theEndpointUrl = createEndpoint(url, endpoint);
-//
-//		Response ret =
-//				given().
-//						body(booking).
-//						contentType(ContentType.JSON).
-//						cookie("token",token).log().all().
-//						when().
-//						put(theEndpointUrl.toExternalForm()).
-//						andReturn();
-//		return ret;
-//	}
-//
-//
-//	public List getBookingIdList(String endpoint){
-//		URL theEndpointUrl = createEndpoint(url, endpoint);
-//
-//		List<RestfulBookerBookingId> bookingsList = Arrays.asList(
-//				given().
-//						contentType(ContentType.JSON).
-//						when().
-//						get(theEndpointUrl.toExternalForm()).as(RestfulBookerBookingId[].class));
-//
-//		return bookingsList;
-//	}
-//
-//	public Response deleteMessageTo(String token, String endpoint){
-//		URL theEndpointUrl = createEndpoint(url, endpoint);
-//
-//		Response ret =
-//				given().
-//						contentType(ContentType.JSON).
-//						cookie("token",token).log().all().
-//						when().
-//						delete(theEndpointUrl.toExternalForm()).
-//						andReturn();
-//		return ret;
-//	}
+	public Response deleteMessageTo(String token, String endpoint){
+		URL theEndpointUrl = createEndpoint(url, endpoint);
+
+		Response ret =
+				given().
+						contentType(ContentType.JSON).
+						cookie("token",token).log().all().
+						when().
+						delete(theEndpointUrl.toExternalForm()).
+						andReturn();
+		return ret;
+	}
 }
