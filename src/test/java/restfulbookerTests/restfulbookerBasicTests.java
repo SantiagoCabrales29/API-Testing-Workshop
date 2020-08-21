@@ -50,9 +50,14 @@ public class restfulbookerBasicTests {
 	public void testBookerIdValue(){
 		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
 		Response response = httpMessageSender.getMessageTo("/booking");
-		response.then().
-				spec(responseSpecification).
-				assertThat().body("bookingid[0]",equalTo(12));
+//		response.then().
+//				spec(responseSpecification).
+//				assertThat().body("bookingid[0]",equalTo(3));
+
+// HACER EL EJERCICIO DEL ULTIMO TEST!!!!!!!! ASSERTION EXERCICE
+		int bookingId = response.then().extract().path("bookingid[0]");
+		Assert.assertEquals(bookingId, 3);
+		System.out.println(bookingId);
 	}
 
 	@Test
