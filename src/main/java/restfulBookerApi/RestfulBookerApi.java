@@ -25,7 +25,6 @@ public class RestfulBookerApi {
 		httpMessageSender = new HttpMessageSender(restfulBookerUrl);
 	}
 
-
 	public Response getBookingsEndpointResponse() {
 
 		Response bookingsListResponse = httpMessageSender.getMessageTo("/booking");
@@ -40,6 +39,45 @@ public class RestfulBookerApi {
 		Response bookingsListResponse = httpMessageSender.getMessageTo("/booking/"+aux);
 
 		return bookingsListResponse;
+	}
+
+	public List<RestfulBookerBookingId> getBookingsIdsList(Response response) {
+
+		JsonElement jsonResponse = parser.parse(response.body().asString());
+
+		List<RestfulBookerBookingId> listBookingsIds = Arrays.asList(gson.fromJson(jsonResponse, RestfulBookerBookingId[].class));
+
+		System.out.println("La lista tiene el tamaño: " + listBookingsIds.size());
+
+		return listBookingsIds;
+
+	}
+	//HACER EL EJERCICIO DEL MAPEO DE RESTFULBOOKERBOOKING
+
+
+
+
+
+
+
+	public RestfulBookerBooking getRandomBooking() {
+		Response response = getBookingsEndpointResponse();
+		List<RestfulBookerBookingId> listBookingIds = getBookingsIdsList(response);
+		int randomNum = generateRandomNumber(listBookingIds.size());
+		System.out.println("El numero random generado es: " + randomNum);
+		response = httpMessageSender.getMessageTo("/booking/"+randomNum);
+
+		JsonElement element = parser.parse(response.body().asString());
+
+		RestfulBookerBooking booking = gson.fromJson(element, RestfulBookerBooking.class);
+		System.out.println("El booking que se selecciono tiene como firstname a: " + booking.getFirstname());
+
+		return booking;
+	}
+
+	public int generateRandomNumber(int limit) {
+		return (int) (Math.random() * limit + 1);
+
 	}
 
 }

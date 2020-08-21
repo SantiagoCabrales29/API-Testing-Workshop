@@ -11,7 +11,11 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import restfulBookerApi.RestfulBookerApi;
+import restfulBookerApi.entities.RestfulBookerBooking;
+import restfulBookerApi.entities.RestfulBookerBookingId;
 import restfulBookerApi.html.HttpMessageSender;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -45,9 +49,6 @@ public class restfulbookerBasicTests {
 	public void restfulBookerFirstTest(){
 		Response response = api.getBookingsEndpointResponse();
 
-//		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
-//		Response response = httpMessageSender.getMessageTo("/booking");
-
 		Assert.assertEquals(200, response.getStatusCode());
 
 	}
@@ -74,9 +75,30 @@ public class restfulbookerBasicTests {
 	public void checkFirstNameTest(){
 		Response response = api.getBookingByIdEndpointResponse(1);
 
-		response.then().
-				assertThat().body("firstname", not(equalTo("Santi"))).
-							body("totalprice",greaterThan(0));
+//		response.then().
+//				assertThat().body("firstname", not(equalTo("Santi"))).
+//							body("totalprice",greaterThan(0));
+
+		RestfulBookerBooking booking = api.getRandomBooking();
+		Assert.assertNotEquals(booking.getFirstname(),"Santi");
+		Assert.assertTrue(booking.getTotalprice() > 0);
+
+	}
+	//Ejercicio con el metodo para obtener la lista!
+
+
+
+
+
+
+
+	@Test
+	public void ListOfBookingsSizeTest(){
+		Response response = api.getBookingsEndpointResponse();
+		List<RestfulBookerBookingId> list = api.getBookingsIdsList(response);
+
+		Assert.assertTrue(list.size() > 0);
+
 	}
 
 
