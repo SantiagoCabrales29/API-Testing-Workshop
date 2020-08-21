@@ -1,5 +1,9 @@
 package helpers;
 
+import restfulBookerApi.html.URLifier;
+
+import java.net.URL;
+
 public class TestEnv {
 	public static final String theUrl = "https://restful-booker.herokuapp.com";
 	public static final String username = "admin";
@@ -19,7 +23,7 @@ public class TestEnv {
 		return token;
 	}
 
-	public static String getURL() {
-		return theUrl;
+	public static URL getURL() {
+		return URLifier.getURLfromString(theUrl);
 	}
 }

@@ -4,10 +4,13 @@ import helpers.TestEnv;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import restfulBookerApi.html.HttpMessageSender;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -15,6 +18,8 @@ import static org.hamcrest.Matchers.*;
 public class restfulbookerBasicTests {
 	private static RequestSpecification requestSpecification;
 	private static ResponseSpecification responseSpecification;
+
+	private  HttpMessageSender httpMessageSender;
 
 	@BeforeClass
 	public static void createRequestSpecification(){
@@ -34,47 +39,49 @@ public class restfulbookerBasicTests {
 
 	@Test
 	public void restfulBookerFirstTest(){
-		given().
-				contentType(ContentType.JSON).
-				spec(requestSpecification).
-		when().
-				get("").
-		then().
-				spec(responseSpecification);
+		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
+		Response response = httpMessageSender.getMessageTo("/booking");
+
+		Assert.assertEquals(200, response.getStatusCode());
+
 	}
 
 	@Test
 	public void testBookerIdValue(){
-		given().
-				spec(requestSpecification).
-		when()
-				.get("").
-		then().
+		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
+		Response response = httpMessageSender.getMessageTo("/booking");
+		response.then().
 				spec(responseSpecification).
 				assertThat().body("bookingid[0]",equalTo(12));
 	}
 
 	@Test
 	public void BookingByIdEndpointFirstTest(){
-		given().
-				contentType(ContentType.JSON).
-				when()
-				.get(TestEnv.getURL()+"/booking/1").
-				then().
-				assertThat().
-				statusCode(200);
+
+		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
+		Response response = httpMessageSender.getMessageTo("/booking/1");
+		Assert.assertEquals(200, response.getStatusCode());
+
+//		given().
+//				contentType(ContentType.JSON).
+//				when()
+//				.get(TestEnv.getURL()+"/booking/1").
+//				then().
+//				assertThat().
+//				statusCode(200);
 	}
 
 	@Test
 	public void checkFirstNameTest(){
-		given().
-				contentType(ContentType.JSON).
-				when()
-				.get(TestEnv.getURL()+"/booking/1").
-				then().
+		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
+		Response response = httpMessageSender.getMessageTo("/booking/1");
+
+		response.then().
 				assertThat().body("firstname", not(equalTo("Santi"))).
 							body("totalprice",greaterThan(0));
 	}
+
+	//Mostrar el post!!!
 
 
 }
