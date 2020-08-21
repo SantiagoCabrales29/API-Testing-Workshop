@@ -10,6 +10,7 @@ import io.restassured.specification.ResponseSpecification;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import restfulBookerApi.RestfulBookerApi;
 import restfulBookerApi.html.HttpMessageSender;
 
 import static io.restassured.RestAssured.given;
@@ -21,8 +22,11 @@ public class restfulbookerBasicTests {
 
 	private  HttpMessageSender httpMessageSender;
 
+	private static RestfulBookerApi api ;
+
 	@BeforeClass
 	public static void createRequestSpecification(){
+		api = new RestfulBookerApi(TestEnv.getURL(),TestEnv.getUsername(), TestEnv.getPassword());
 		requestSpecification = new RequestSpecBuilder().
 				setContentType(ContentType.JSON).
 				setBaseUri("https://restful-booker.herokuapp.com/booking").
@@ -39,8 +43,10 @@ public class restfulbookerBasicTests {
 
 	@Test
 	public void restfulBookerFirstTest(){
-		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
-		Response response = httpMessageSender.getMessageTo("/booking");
+		Response response = api.getBookingsEndpointResponse();
+
+//		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
+//		Response response = httpMessageSender.getMessageTo("/booking");
 
 		Assert.assertEquals(200, response.getStatusCode());
 
@@ -48,45 +54,30 @@ public class restfulbookerBasicTests {
 
 	@Test
 	public void testBookerIdValue(){
-		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
-		Response response = httpMessageSender.getMessageTo("/booking");
-//		response.then().
-//				spec(responseSpecification).
-//				assertThat().body("bookingid[0]",equalTo(3));
+		Response response = api.getBookingsEndpointResponse();
 
-// HACER EL EJERCICIO DEL ULTIMO TEST!!!!!!!! ASSERTION EXERCICE
 		int bookingId = response.then().extract().path("bookingid[0]");
-		Assert.assertEquals(bookingId, 3);
+		Assert.assertEquals(bookingId, 10);
 		System.out.println(bookingId);
 	}
 
 	@Test
 	public void BookingByIdEndpointFirstTest(){
+		Response response = api.getBookingByIdEndpointResponse(1);
 
-		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
-		Response response = httpMessageSender.getMessageTo("/booking/1");
+//		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
+//		Response response = httpMessageSender.getMessageTo("/booking/1");
 		Assert.assertEquals(200, response.getStatusCode());
-
-//		given().
-//				contentType(ContentType.JSON).
-//				when()
-//				.get(TestEnv.getURL()+"/booking/1").
-//				then().
-//				assertThat().
-//				statusCode(200);
 	}
 
 	@Test
 	public void checkFirstNameTest(){
-		httpMessageSender = new HttpMessageSender(TestEnv.getURL());
-		Response response = httpMessageSender.getMessageTo("/booking/1");
+		Response response = api.getBookingByIdEndpointResponse(1);
 
 		response.then().
 				assertThat().body("firstname", not(equalTo("Santi"))).
 							body("totalprice",greaterThan(0));
 	}
-
-	//Mostrar el post!!!
 
 
 }
